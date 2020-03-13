@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dotnetnuke type="Package" version="6.0">
+  <packages>
+    <package name="ProcessImagesModule_Symbols" type="Library" version="01.01.00">
+      <friendlyName>ProcessImagesModule Symbols</friendlyName>
+      <description><![CDATA[Deleteme]]></description>
+      <owner>
+        <name>Upendo Ventures</name>
+        <organization>Upendo Ventures, LLC</organization>
+        <url>https://upendoventures.com</url>
+        <email>solutions@upendoventures.com</email>
+      </owner>
+      <license src="License.txt" />
+      <releaseNotes src="ReleaseNotes.txt" />
+      <azureCompatible>True</azureCompatible>
+      <components>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath></basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>
