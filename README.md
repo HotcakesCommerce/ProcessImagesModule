@@ -7,7 +7,7 @@ Related Documentation:  [https://hotcakescommerce.zendesk.com/hc/en-us/articles/
 
 ## About Hotcakes Commerce
 
-[Hotcakes Commerce](https://hotcakescommerce.com) is an e-commerce solution that empowers developers and designers alike to be able to actually fulfill 
+[Hotcakes Commerce](https://hotcakes.org) is an e-commerce solution that empowers developers and designers alike to be able to actually fulfill 
 client requirements when building an online store.  We believe that e-commerce should be easier, for EVERYONE on your team.
 
 ---
@@ -25,19 +25,18 @@ client requirements when building an online store.  We believe that e-commerce s
 
 ## Getting Started: Developers
 
-1. You should create a website folder where your project will be. This can be anywhere on your system.  For example 
-C:\Websites\MyProjectName\
-2. Clone the repository into that folder
-3. Create a new folder in the root:  _Website_  (Example:  C:\Websites\MyProjectName\Website\ )
-4. Update IIS and your local HOSTS file to point to [http://ProcessImagesModule.loc](http://ProcessImagesModule.loc)
-5. Install the CMS into the website folder (see version info below).
-6. Install Hotcakes Commerce.
-7. Run the Hotcakes Commerce "Getting Started" wizard.
-8. Add sample products, or add some of your own.
-9. Build this project in Debug mode.
-10. "Install" the ProcessImages module using the Create New Module > Create from Manifest.
-11. If it's not on a page already, add this module to a new or existing page.
-12. Play with the module.
+1. You should create a website folder where your project will be. This can be anywhere on your system. For example `C:\Websites\MyProjectName\`  
+2. Clone the repository into that folder  
+3. Create a new folder in the root:  _Website_  (Example:  `C:\Websites\MyProjectName\Website\` )  
+4. Update IIS and your local HOSTS file to point to your local development URL, such as [http://ProcessImagesModule.loc](http://ProcessImagesModule.loc)  
+5. Install the CMS into the website folder (see version info below).  
+6. Install Hotcakes Commerce into the CMS.  
+7. Run the Hotcakes Commerce "Getting Started" wizard.  
+8. Add sample products, or add some of your own.  
+9. Build this project in Debug mode.  
+10. "Install" the ProcessImages module using the Create New Module > Create from Manifest. (You can also install the package you created when building in Release mode.)  
+11. If it's not on a page already, add this module to a new or existing page.  
+12. Play with the module.  
 
 ---
 
@@ -45,7 +44,7 @@ C:\Websites\MyProjectName\
 
 ### CMS
 
-This solution is currently being built against DNN 07.04.02.
+This solution is currently being built against DNN 09.02.02.
 
 [Download Now](https://hotcakescommerce.zendesk.com/hc/en-us/articles/208602886-Latest-Supported-CMS-Release)
 
@@ -53,7 +52,7 @@ Be sure that you get the file permissions properly assigned to the folders when 
 
 ### Visual Studio Extensions
 
-The following Visual Studio 2015 extensions are currently installed and being used in my environment, but are not 
+The following Visual Studio 2019 extensions are currently installed and being used in my environment, but are not 
 necessary to work on the project.  There are more, but these are the only ones that are relevant to this project.
 
 * Guidinserter2
@@ -92,12 +91,12 @@ move the module files into the appropriate Website\DesktopModules\ folder as wel
 Building in __RELEASE__ mode will _not_ move the project files, but it will package the module 
 in an Install and Source package that can be used to install on another Hotcakes site for testing or deployment.
 
-~\Website\Install\Module\
+`~\Website\Install\Module\`
 
 This is VERY important to know.  This module has a Module.Build file that properly maps it's 
 files that need to be moved into the Website folder.
 
-[https://github.com/hismightiness/dnnextensions](https://github.com/hismightiness/dnnextensions)
+[https://github.com/upendoventures/generator-upendodnn](https://github.com/upendoventures/generator-upendodnn)
 
 ## Debugging
 

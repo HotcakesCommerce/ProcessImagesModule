@@ -2,8 +2,8 @@
 	<h3>MIT License</h3>
 	
 	<p class="Owner">
-		Hotcakes Commerce, LLC <a href="https://hotcakescommerce.com">https://hotcakescommerce.com</a><br />
-		Copyright (c) 2016 Hotcakes Commerce, LLC
+		Upendo Ventures, LLC <a href="https://upendoventures.com">https://upendoventures.com</a><br />
+		Copyright (c) 2020 Upendo Ventures, LLC
 	</p>
 
 	<p>
