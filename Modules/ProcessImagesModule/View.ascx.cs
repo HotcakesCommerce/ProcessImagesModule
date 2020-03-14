@@ -1,5 +1,5 @@
 ﻿/*
-' Copyright (c) 2016 Hotcakes Commerce, LLC
+' Copyright (c) 2020 Upendo Ventures, LLC
 '  All rights reserved.
 ' 
 ' Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -23,20 +23,21 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Web.UI;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Exceptions;
+using Hotcakes.Commerce;
 using Hotcakes.Commerce.Catalog;
 using Hotcakes.Commerce.Extensions;
-using Hotcakes.Commerce.Orders;
 using Hotcakes.Commerce.Storage;
-using Hotcakes.Commerce.Urls;
 
 namespace Hotcakes.Modules.ProcessImagesModule
 {
     public partial class View : ProcessImagesModuleBase
     {
+        private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(View));
+
         #region Event Handlers
 
         protected void Page_Load(object sender, EventArgs e)
@@ -75,65 +76,83 @@ namespace Hotcakes.Modules.ProcessImagesModule
 
         private void ProcessImages()
         {
-            // get an instance of the store application
-            var HccApp = HccAppHelper.InitHccApp();
-            // get a collection of the products in the store
-            var products = HccApp.CatalogServices.Products.FindAllPaged(1, int.MaxValue);
-            var sb = new StringBuilder();
+            Logger.Debug("Running the Hotcakes Commerce product image import module.");
 
-            // a title simply to give context of the text to follow
-            sb.Append("<blockquote style=\"background-color: #f1f1f1; padding: 1.5em;\">");
-            sb.AppendFormat("<h2>{0}</h2>", GetLocalizedString("ProcessTitle"));
-            
-            if (products != null && products.Count > 0)
+            try
             {
-                // begin processing images for each image
-                var importPath = DiskStorage.GetStoreDataVirtualPath(HccApp.CurrentStore.Id) + "import/";
+                // get an instance of the store application
+                var context = HccRequestContext.Current;
 
-                // display where the module is looking for images
-                sb.AppendFormat("<p><strong>{0}:</strong> {1}</p>", GetLocalizedString("ImportPathLabel"), importPath);
+                // create a repo to get the catalog data
+                var repoProduct = new ProductRepository(context);
 
-                // iterate through each product in the store to find images
-                foreach (var product in products)
+                // get a collection of the products in the store
+                var products = repoProduct.FindAllPagedWithCache(1, int.MaxValue);
+
+                var sb = new StringBuilder();
+
+                // a title simply to give context of the text to follow
+                sb.Append("<blockquote style=\"background-color: #f1f1f1; padding: 1.5em;\">");
+                sb.Append($"<h2>{GetLocalizedString("ProcessTitle")}</h2>");
+
+                if (products != null && products.Count > 0)
                 {
-                    // display the product being processed
-                    sb.AppendFormat("<h3>Importing ({0}) {1}</h3>", product.Sku, product.ProductName);
+                    // begin processing images for each image
+                    var importPath = string.Concat(DiskStorage.GetStoreDataVirtualPath(context.CurrentStore.Id), "import/");
 
-                    // put together the expected path of the image
-                    var filePath = importPath + product.ImageFileMedium;
+                    // display where the module is looking for images
+                    sb.Append($"<p><strong>{GetLocalizedString("ImportPathLabel")}:</strong> {importPath}</p>");
 
-                    // display the image path to the user
-                    sb.AppendFormat("<p><strong>{0}</strong>: <a href=\"{1}\" target=\"_blank\">{1}</a></p>", GetLocalizedString("FilePathLabel"), filePath.Replace("~", string.Empty), filePath);
-
-                    // determine if the import file/path exists
-                    if (File.Exists(Server.MapPath(filePath)))
+                    // iterate through each product in the store to find images
+                    foreach (var product in products)
                     {
-                        // let the user know the image import is beginning
-                        sb.AppendFormat("<p>{0}</p>", GetLocalizedString("FileImportBegin"));
+                        // display the product being processed
+                        sb.Append($"<h3>Importing ({product.Sku}) {product.ProductName}</h3>");
 
-                        // import the image from the import location
-                        DiskStorage.CopyProductImage(HccApp.CurrentStore.Id, product.Bvin, filePath, product.ImageFileMedium);
+                        // put together the expected path of the image
+                        var filePath = importPath + product.ImageFileMedium;
 
-                        // let the user know the import was completed
-                        sb.AppendFormat("<p>{0}</p>", GetLocalizedString("FileImported"));
-                    }
-                    else
-                    {
-                        // the image was not found in the import location
-                        sb.AppendFormat("<p style=\"color: #ff0000\">{0}</p>", GetLocalizedString("FileNotFound"));
+                        // display the image path to the user
+                        sb.Append($"<p><strong>{GetLocalizedString("FilePathLabel")}</strong>: <a href=\"{filePath.Replace("~", string.Empty)}\" target=\"_blank\">{filePath}</a></p>");
+
+                        // determine if the import file/path exists
+                        if (File.Exists(Server.MapPath(filePath)))
+                        {
+                            // let the user know the image import is beginning
+                            sb.Append($"<p>{GetLocalizedString("FileImportBegin")}</p>");
+
+                            // import the image from the import location
+                            DiskStorage.CopyProductImage(context.CurrentStore.Id, product.Bvin, filePath, product.ImageFileMedium);
+
+                            // let the user know the import was completed
+                            sb.Append($"<p>{GetLocalizedString("FileImported")}</p>");
+                        }
+                        else
+                        {
+                            // the image was not found in the import location
+                            sb.Append($"<p style=\"color: #ff0000\">{GetLocalizedString("FileNotFound")}</p>");
+                        }
                     }
                 }
+                else
+                {
+                    // no products were found
+                    sb.Append($"<p>{GetLocalizedString("NoProducts")}</p>");
+                }
+
+                sb.Append("</blockquote>");
+
+                // render the output to the user
+                phImportSummary.Controls.Add(new LiteralControl(sb.ToString()));
             }
-            else
+            catch(Exception ex)
             {
-                // no products were found
-                sb.AppendFormat("<p>{0}</p>", GetLocalizedString("NoProducts"));
+                Exceptions.LogException(ex);
+                Logger.Error(ex.Message, ex);
+                throw ex;
             }
 
-            sb.Append("</blockquote>");
-
-            // render the output to the user
-            phImportSummary.Controls.Add(new LiteralControl(sb.ToString()));
+            Logger.Debug("Hotcakes Commerce product image import COMPLETE.");
         }
 
         #endregion
