@@ -1,5 +1,5 @@
 ﻿/*
-' Copyright (c) 2016 Hotcakes Commerce, LLC
+' Copyright (c) 2020 Upendo Ventures, LLC
 '  All rights reserved.
 ' 
 ' Permission is hereby granted, free of charge, to any person obtaining a copy 
